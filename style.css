@@ -1,0 +1,61 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    letter-spacing: .3vmin;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+header {
+    font-size: 6vmin;
+}
+
+h1 {
+    font-size: 3vmin;
+    font-weight: 400;
+    font-style: oblique;
+}
+
+section {
+    justify-content: center;
+    margin: 0;
+    width: 65vmin;
+    height: 65vmin;
+    border: 1px solid black;
+    
+
+}
+#gridBoard {
+    display: grid;
+    grid-template-columns: repeat(10, 6.5vmin);
+    grid-template-rows: repeat(10, 6.48vmin);
+}
+#gridBoard>div {
+    border: .02vmin solid lightgray;
+    /* provide a border radius to round the corners of the div */
+}
+
+
+
+button {
+    font-size: 2.5vmin;
+    margin: 5px 0 5px  0;
+    border: 1px solid darkgrey;
+    border-radius: 30%;
+}
+
+#fire {
+    color: gray;
+}
+
+#fire:hover { 
+    color: black;
+    background-color: red;
+
+}
