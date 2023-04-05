@@ -22,26 +22,33 @@ h1 {
     font-style: oblique;
 }
 
-section {
+.container {
+    display: flex;
     justify-content: center;
     margin: 0;
-    width: 65vmin;
-    height: 65vmin;
-    border: 1px solid black;
+    width: 100%;
+    
     
 
 }
-#gridBoard {
+.gridBoard {
+    margin: 2vmin;
     display: grid;
-    grid-template-columns: repeat(10, 6.5vmin);
-    grid-template-rows: repeat(10, 6.48vmin);
+    background-color: rgb(68, 182, 221);
+    grid-template-columns: repeat(10, 4.6vmin);
+    grid-template-rows: repeat(10, 4.6vmin);
 }
-#gridBoard>div {
-    border: .02vmin solid lightgray;
-    /* provide a border radius to round the corners of the div */
+.gridBoard .square {
+    border: .1vmin solid lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4.5vmin;
 }
 
-
+.ship {
+    background-color: grey;
+}
 
 button {
     font-size: 2.5vmin;

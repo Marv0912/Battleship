@@ -16,11 +16,15 @@ let sunkenShips;
 /*----- cached elements -----*/
 const playerEl = document.querySelector('h1');
 const playAgainBtn = document.querySelector('button');
-const fireBtn = document.getElementById(fire);
+const squares = document.querySelectorAll('.square');
 
 /*----- event listeners -----*/
 playAgainBtn.addEventListener('click', initialize);
-fireBtn.addEventListener('click', )
+squares.forEach(square => {
+    square.addEventListener('click', () => {
+        square.textContent = 'X';
+    })
+})
 
 /*----- functions -----*/
 initialize();
