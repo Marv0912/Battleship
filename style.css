@@ -27,9 +27,6 @@ h1 {
     justify-content: center;
     margin: 0;
     width: 100%;
-    
-    
-
 }
 .gridBoard {
     margin: 2vmin;
@@ -46,10 +43,6 @@ h1 {
     font-size: 4.5vmin;
 }
 
-.ship {
-    background-color: grey;
-}
-
 button {
     font-size: 2.5vmin;
     margin: 5px 0 5px  0;
@@ -57,12 +50,3 @@ button {
     border-radius: 30%;
 }
 
-#fire {
-    color: gray;
-}
-
-#fire:hover { 
-    color: black;
-    background-color: red;
-
-}

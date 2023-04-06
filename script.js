@@ -9,7 +9,8 @@ const displayShot = {
 /*----- state variables -----*/
 let turn;
 let winner;
-let grid;
+let ship;
+let playerGrid, computerGrid;
 let sunkenShips;
 
 
@@ -35,7 +36,7 @@ function initialize() {
     winner = null;
 
     // 90 degree turn
-    grid = [
+    playerGrid = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 1
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 2
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 3
@@ -48,6 +49,20 @@ function initialize() {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 10
         // a  b  c  d  e  f  g  h  i  j
     ]
+    computerGrid = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 1
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 2
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 3
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 4
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 5
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 6
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 7
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 8
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 9
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // col 10
+        // a  b  c  d  e  f  g  h  i  j
+    ]
+
 
     render();
 }
