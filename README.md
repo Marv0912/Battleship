@@ -24,3 +24,4 @@ Try my game out! [Battleship]
     - NO. of free cells left
 
 
+### Special thanks to the Coding Train on youtube and to a fellow programmer for helping me into making this happen.
