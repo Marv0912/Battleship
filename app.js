@@ -1,3 +1,5 @@
+
+// state variables
 let fps = 60;
 let cols = 10;
 let rows = 10;
@@ -6,12 +8,14 @@ let playerShips = 5;
 let computerShips = 5;
 let playerGrid = [];
 let computerGrid = [];
-
 let isGameOver = false;
 
+
+// functions
 function initialize2DArray(cols, rows){
-    var arr = new Array(cols);
-    for(var i = 0; i<arr.length; i++){
+    const arr = new Array(cols);
+
+    for(const i = 0; i<arr.length; i++){
         arr[i] = new Array(rows);
     }
     return fillArray(arr);
@@ -19,12 +23,13 @@ function initialize2DArray(cols, rows){
 
 function fillArray(arr){
     count = 1;
-    for(var i = 0; i<arr.length; i++){
-        for(var j = 0; j<arr[i].length; j++){
+    for(const i = 0; i<arr.length; i++){
+        for(const j = 0; j<arr[i].length; j++){
             arr[i][j] = {
                 id: count,
                 isShip: false,
-                isShot: false
+                isShot: false,
+                ship: {}
             };
             count++;
         }
@@ -33,13 +38,14 @@ function fillArray(arr){
 }
 
 function displayBoard(){
-    for(var i = 1; i<cols*rows+1; i++){
-        var playerSquare = document.createElement("div");
+    // Create 10x10 grid for player and computer
+    for(const i = 1; i<cols*rows+1; i++){
+        const playerSquare = document.createElement("div");
         playerSquare.className = "square";
         playerSquare.id = i;
         document.getElementById('PlayerBoard').appendChild(playerSquare);
 
-        var opponentSquare = document.createElement("div");
+        const opponentSquare = document.createElement("div");
         opponentSquare.className = "square";
         opponentSquare.id = i;
         opponentSquare.setAttribute("onclick", "onPlayerTouch(this.id);");
@@ -56,8 +62,8 @@ function onPlayerTouch(id){
 }
 
 function checkCell(id){
-    for(var i = 0; i<computerGrid.length; i++){
-        for(var j = 0; j<computerGrid[i].length; j++){
+    for(const i = 0; i<computerGrid.length; i++){
+        for(const j = 0; j<computerGrid[i].length; j++){
             let cell = computerGrid[i][j];
             if(id == cell.id){
                 if(cell.isShot == false){
@@ -70,13 +76,13 @@ function checkCell(id){
     }
 }
 
-function initializeGame(){
+function initialize(){
     playerGrid = initialize2DArray(cols, rows);
     computerGrid = initialize2DArray(cols, rows);
     displayBoard();
 }
 
-initializeGame();
+initialize();
 
 //Start of the Game Loop
 window.onload = () => {
@@ -89,14 +95,26 @@ window.onload = () => {
 function updateGame(){
     if(!isGameOver){
         if(!playerTurn){
-            console.log("Computers Turn!");
+            computerMove();
+        } else if (playerShips === 0 || computerShips === 0) {
+            isGameOver = true;
         }
     }
     else{ 
         clearInterval(loop);
     }
 }
-let randomRow = Math.floor(Math.random() * rows);
-let randomColumn = Math.floor(Math.random() * cols);
-let cell = playerGrid[randomRow][randomColumn];
+
+function computerMove() {
+    let randomRow = Math.floor(Math.random() * rows);
+    let randomColumn = Math.floor(Math.random() * cols);
+    let cell = playerGrid[randomRow][randomColumn];
+
+    if(!cell.isShot) {
+        playerGrid[randomRow][randomColumn] = true;
+        playerTurn = true;
+        document.getElementById(cell.id).innerHTML = 'X';
+        console.log('Computer made a move');
+    }
+}
 
