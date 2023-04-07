@@ -53,6 +53,7 @@ function displayBoard() {
         opponentSquare.id = i;
         opponentSquare.setAttribute("onclick", "onPlayerTouch(this.id);");
         document.getElementById('opponentBoard').appendChild(opponentSquare);
+        
     }
 }
 
@@ -70,7 +71,13 @@ function checkCell(id) {
                     cell.isShot = true;
                 } else {
                     playerTurn = false;
-                    computerGrid[i][j];
+                    cell.isShot = true;
+                    if(cell.isShip) {
+                        document.getElementById(id).textContent = 'X';
+                    } else {
+                        document.getElementById(id).textContent = 'O';
+
+                    }
                 }
             }
         }
@@ -83,6 +90,7 @@ function onPlayerTouch(id) {
     } else {
         console.log("It is not your turn!");
     }
+    console.log('player made move');
 }
 // Initialize Arrays
 function initialize() {
@@ -91,10 +99,12 @@ function initialize() {
     displayBoard();
 }
 
-initialize();
 
 //Start of the Game Loop
 window.onload = () => {
+    initialize();
+    placeShips(playerGrid);
+    placeShips(computerGrid);
     loop = setInterval(() => {
         updateGame();
     }, 1000 / fps);
@@ -123,7 +133,12 @@ function computerMove() {
     if (!cell.isShot) {
         playerGrid[randomRow][randomColumn] = true;
         playerTurn = true;
-        document.getElementById(cell.id).innerHTML = 'X';
+        if(cell.isShip) {
+            document.getElementById(cell.id).textContent = 'X';
+        }else {
+            document.getElementById(cell.id).textContent = 'O';
+
+        }
         console.log('Computer made a move');
     }
 }
@@ -183,5 +198,4 @@ function placeShips(grid) {
     return placedShips;
 }
 
-placeShips(playerGrid);
-placeShips(computerGrid);
+
