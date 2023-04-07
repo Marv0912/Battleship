@@ -16,24 +16,23 @@ let isGameOver = false; // Used to loop until game is over
 // functions
 
 // Creates 10x10 array
-function initialize2DArray(cols, rows){
+function initialize2DArray(cols, rows) {
     const arr = new Array(cols);
 
-    for(let i = 0; i<arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         arr[i] = new Array(rows);
     }
     return fillArray(arr);
 }
 
-function fillArray(arr){
+function fillArray(arr) {
     count = 1;
-    for(let i = 0; i<arr.length; i++){
-        for(let j = 0; j<arr[i].length; j++){
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
             arr[i][j] = {
                 id: count,
                 isShip: false,
                 isShot: false,
-                ship: {}
             };
             count++;
         }
@@ -41,9 +40,9 @@ function fillArray(arr){
     return arr;
 }
 
-function displayBoard(){
+function displayBoard() {
     // Create 10x10 grid(divs) for player and computer
-    for(let i = 1; i<cols*rows+1; i++){
+    for (let i = 1; i < cols * rows + 1; i++) {
         const playerSquare = document.createElement("div");
         playerSquare.className = "square";
         playerSquare.id = i;
@@ -58,25 +57,18 @@ function displayBoard(){
 }
 
 //
-function onPlayerTouch(id){
-    if(playerTurn === true){
-        checkCell(id);
-    }else{
-        console.log("It is not your turn!");
-    }
-}
 
 // Will check if cell was shot so it can change it
 // If same cell selceted twice, it will not proceed with game
-function checkCell(id){
-    for(let i = 0; i<computerGrid.length; i++){
-        for(let j = 0; j<computerGrid[i].length; j++){
+function checkCell(id) {
+    for (let i = 0; i < computerGrid.length; i++) {
+        for (let j = 0; j < computerGrid[i].length; j++) {
             let cell = computerGrid[i][j];
-            if(id == cell.id){
-                if(cell.isShot === true){
+            if (id == cell.id) {
+                if (cell.isShot === true) {
                     checkCell(id);
                     cell.isShot = true;
-                }else{
+                } else {
                     playerTurn = false;
                     computerGrid[i][j];
                 }
@@ -85,8 +77,15 @@ function checkCell(id){
     }
 }
 
+function onPlayerTouch(id) {
+    if (playerTurn === true) {
+        checkCell(id);
+    } else {
+        console.log("It is not your turn!");
+    }
+}
 // Initialize Arrays
-function initialize(){
+function initialize() {
     playerGrid = initialize2DArray(cols, rows);
     computerGrid = initialize2DArray(cols, rows);
     displayBoard();
@@ -98,19 +97,19 @@ initialize();
 window.onload = () => {
     loop = setInterval(() => {
         updateGame();
-    }, 1000/fps);
+    }, 1000 / fps);
 };
 
 // Updates turns and checks if any player's ships went to 0 to stop game
-function updateGame(){
-    if(!isGameOver){
-        if(!playerTurn){
+function updateGame() {
+    if (!isGameOver) {
+        if (!playerTurn) {
             computerMove();
         } else if (playerShips === 0 || computerShips === 0) {
             isGameOver = true;
         }
     }
-    else{ 
+    else {
         clearInterval(loop);
     }
 }
@@ -121,7 +120,7 @@ function computerMove() {
     let randomColumn = Math.floor(Math.random() * cols);
     let cell = playerGrid[randomRow][randomColumn];
     //  If random shot made by computer was in an empty cell add X 
-    if(!cell.isShot) {
+    if (!cell.isShot) {
         playerGrid[randomRow][randomColumn] = true;
         playerTurn = true;
         document.getElementById(cell.id).innerHTML = 'X';
@@ -129,10 +128,60 @@ function computerMove() {
     }
 }
 
+
 function placeShips(grid) {
     const size = grid.length;
     const placedShips = [];
+
+
+    // Loop through each ship
+    for (let i = 0; i < ships.length; i++) {
+        let ship = {};
+        let shipPlaced = false;
+
+        // Place ship until it fits
+        while (!shipPlaced) {
+            const row = Math.floor(Math.random() * size);
+            const col = Math.floor(Math.random() * size);
+            const direction = directions[Math.floor(Math.random() * directions.length)];
+            const shipSize = ships[i];
+
+            // Verify that no ship overlaps
+            let positions = [];
+            let canPlace = true;
+            for (let j = 0; j < shipSize; j++) {
+                let rowShift = direction === 'vertical' ? j : 0;
+                let colShift = direction === 'horizontal' ? j : 0;
+
+                if (row + rowShift >= size || col + colShift >= size || grid[row + rowShift][col + colShift].isShip) {
+                    canPlace = false;
+                    break;
+
+                }
+
+                positions.push({ row: row + rowShift, col: col + colShift });
+
+            }
+            // If the ship can be placed, add it to the grid and placedShips array
+            if (canPlace) {
+                ship = { size: shipSize, positions: positions, direction: direction };
+                placedShips.push(ship);
+
+                for (let j = 0; j < shipSize; j++) {
+                    let rowShift = direction === 'vertical' ? j : 0;
+                    let colShift = direction === 'horizontal' ? j : 0;
+                    grid[row + rowShift][col + colShift].isShip = true;
+                    grid[row + rowShift][col + colShift].ship = ship;
+                }
+
+                shipPlaced = true;
+            }
+
+        }
+    }
+
+    return placedShips;
 }
 
-
-
+placeShips(playerGrid);
+placeShips(computerGrid);
