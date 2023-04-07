@@ -24,4 +24,4 @@ Try my game out! [Battleship]https://marv0912.github.io/Battleship/
     - NO. of free cells left
 
 
-### Special thanks to the Coding Train on youtube and to a fellow programmer for helping me into making this happen.
+### Special thanks to the Mozilla, Coding Train on youtube and to a fellow programmer for helping me into making this happen.

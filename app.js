@@ -13,7 +13,9 @@ let playerGrid = []; // Grid for players ships
 let computerGrid = []; // Grid for computers ships
 let isGameOver = false; // Used to loop until game is over
 
-// functions
+/*----- cached elements -----*/
+const startButton = document.getElementById('startButton');
+/*----- functions -----*/
 
 // Creates 10x10 array
 function initialize2DArray(cols, rows) {
@@ -47,13 +49,14 @@ function displayBoard() {
         playerSquare.className = "square";
         playerSquare.id = i;
         document.getElementById('playerBoard').appendChild(playerSquare);
+    }
 
+    for (let i = 1; i < cols * rows + 1; i++) {
         const opponentSquare = document.createElement("div");
         opponentSquare.className = "square";
         opponentSquare.id = i;
-        opponentSquare.setAttribute("onclick", "onPlayerTouch(this.id);");
+        opponentSquare.setAttribute("onclick", "onPlayerTouch(this.id)");
         document.getElementById('opponentBoard').appendChild(opponentSquare);
-        
     }
 }
 
@@ -69,10 +72,22 @@ function checkCell(id) {
                 if (cell.isShot === true) {
                     checkCell(id);
                     cell.isShot = true;
+                    document.getElementById(id).textContent = 'X';
+                    const placedShipIndex = placedShips.findIndex(ship => ship.id === cell.shipId);
+                    placedShips[placedShipIndex].hits++;
+                    if (placedShips[placedShipIndex].hits === placedShips[placedShipIndex].size) {
+                        if (playerTurn) {
+                            computerShips--;
+                            console.log("Computer lost a ship. Remaining: ", computerShips);
+                        } else {
+                            playerShips--;
+                            console.log("Player lost a ship. Remaining: ", playerShips);
+                        }
+                    }
                 } else {
                     playerTurn = false;
                     cell.isShot = true;
-                    if(cell.isShip) {
+                    if (cell.isShip) {
                         document.getElementById(id).textContent = 'X';
                     } else {
                         document.getElementById(id).textContent = 'O';
@@ -87,10 +102,7 @@ function checkCell(id) {
 function onPlayerTouch(id) {
     if (playerTurn === true) {
         checkCell(id);
-    } else {
-        console.log("It is not your turn!");
     }
-    console.log('player made move');
 }
 // Initialize Arrays
 function initialize() {
@@ -101,14 +113,14 @@ function initialize() {
 
 
 //Start of the Game Loop
-window.onload = () => {
+startButton.addEventListener('click', function () {
     initialize();
     placeShips(playerGrid);
     placeShips(computerGrid);
     loop = setInterval(() => {
         updateGame();
     }, 1000 / fps);
-};
+});
 
 // Updates turns and checks if any player's ships went to 0 to stop game
 function updateGame() {
@@ -133,9 +145,9 @@ function computerMove() {
     if (!cell.isShot) {
         playerGrid[randomRow][randomColumn] = true;
         playerTurn = true;
-        if(cell.isShip) {
+        if (cell.isShip) {
             document.getElementById(cell.id).textContent = 'X';
-        }else {
+        } else {
             document.getElementById(cell.id).textContent = 'O';
 
         }
