@@ -14,10 +14,12 @@ let computerGrid = []; // Grid for computers ships
 let isGameOver = false; // Used to loop until game is over
 let playerShipPositions = []; // player ship positions
 let computerShipPositions = []; // computer ship positions
+let gameOverMessage = '';
 
 /*----- cached elements -----*/
 const startButton = document.getElementById('startButton');
-const playAgainButton = document.querySelector('button');
+const playAgainButton = document.getElementById('playAgain');
+const displayWinner = document.getElementById('displayWinner');
 /*----- functions -----*/
 
 // Creates 10x10 array
@@ -92,14 +94,18 @@ function checkCell(id) {
         cell = computerGrid[row][col];
         if(cell.isShip) {
             computerShipPositions[cell.shipId].size--;
+            console.log('hit ship')
             if(computerShipPositions[cell.shipId].size < 1) computerShips--;
+                console.log('sunk ship');
         }
     }
     function searchForPlayerShip(row, col) {
         cell = playerGrid[row][col];
         if(cell.isShip) {
             playerShipPositions[cell.shipId].size--;
+            console.log('hit ship');
             if(playerShipPositions[cell.shipId].size < 1) playerShips--;
+                console.log('sunk ship');
         }
     }
 
@@ -134,17 +140,26 @@ function updateGame() {
             computerMove();
         }
         if (playerShips === 0) {
-            gameOverMessage.textContent = "Game over! You lost."
             playAgainButton.hidden = false
             isGameOver = true;
+            document.getElementById('playerBoard').innerHTML = '';
+            document.getElementById('opponentBoard').innerHTML = ''
         } else if (computerShips === 0) {
-            gameOverMessage.textContent = "Congrats! You won."
             playAgainButton.hidden = false
             isGameOver = true;
+            document.getElementById('playerBoard').innerHTML = '';
+            document.getElementById('opponentBoard').innerHTML = ''
         }
     }
     else {
         clearInterval(loop);
+        if (playerShips === 0) {
+            gameOverMessage = 'Computer Wins!';
+        } else if (computerShips === 0) {
+            gameOverMessage = 'You Win!';
+        }
+        playAgainButton.hidden = false;
+        displayWinner.innerHTML = `<h1>${gameOverMessage}</h1>`;
     }
 }
 
@@ -159,7 +174,7 @@ function computerMove() {
         playerTurn = true;
         if (cell.isShip) {
             document.getElementById(cell.id).textContent = 'X';
-            searchForPlayerShip(row, col);
+            searchForPlayerShip(randomRow, randomColumn);
         } else {
             document.getElementById(cell.id).textContent = 'O';
 
@@ -206,13 +221,12 @@ function placeShips(grid) {
             // If the ship can be placed, add it to the grid and placedShips array
             if (canPlace) {
                 ship = { size: shipSize, positions: positions, direction: direction };
-                placedShips.push(ship);
+                placedShips[id] = ship;
 
                 for (let j = 0; j < shipSize; j++) {
                     let rowShift = direction === 'vertical' ? j : 0;
                     let colShift = direction === 'horizontal' ? j : 0;
                     grid[row + rowShift][col + colShift].isShip = true;
-                    grid[row + rowShift][col + colShift].ship = ship;
                     grid[row + rowShift][col + colShift].shipId = id;
                 }
 
