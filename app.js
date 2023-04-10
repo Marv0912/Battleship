@@ -3,7 +3,7 @@ const ships = [2, 3, 3, 4, 5];
 const directions = ['horizontal', 'vertical'];
 
 /*----- state variables -----*/
-let fps = 60; //
+let fps = 60; // refresh rate of screen
 let cols = 10; // # of columns
 let rows = 10; // # of rows
 let playerTurn = true; //player starts game
@@ -12,27 +12,29 @@ let computerShips = 5; // # of ships computer starts
 let playerGrid = []; // Grid for players ships
 let computerGrid = []; // Grid for computers ships
 let isGameOver = false; // Used to loop until game is over
+let playerShipPositions = []; // player ship positions
+let computerShipPositions = []; // computer ship positions
 
 /*----- cached elements -----*/
 const startButton = document.getElementById('startButton');
 /*----- functions -----*/
 
 // Creates 10x10 array
-function initialize2DArray(cols, rows) {
+function initialize2DArray(cols, rows, modifier) {
     const arr = new Array(cols);
 
     for (let i = 0; i < arr.length; i++) {
         arr[i] = new Array(rows);
     }
-    return fillArray(arr);
+    return fillArray(arr, modifier);
 }
 
-function fillArray(arr) {
+function fillArray(arr, modifier) {
     count = 1;
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr[i].length; j++) {
             arr[i][j] = {
-                id: count,
+                id: count + modifier,
                 isShip: false,
                 isShot: false,
             };
@@ -51,7 +53,7 @@ function displayBoard() {
         document.getElementById('playerBoard').appendChild(playerSquare);
     }
 
-    for (let i = 1; i < cols * rows + 1; i++) {
+    for (let i = 101; i < cols * rows + 101; i++) {
         const opponentSquare = document.createElement("div");
         opponentSquare.className = "square";
         opponentSquare.id = i;
@@ -63,41 +65,40 @@ function displayBoard() {
 //
 
 // Will check if cell was shot so it can change it
-// If same cell selceted twice, it will not proceed with game
+// If same cell selected twice, it will not proceed with game
 function checkCell(id) {
     for (let i = 0; i < computerGrid.length; i++) {
         for (let j = 0; j < computerGrid[i].length; j++) {
             let cell = computerGrid[i][j];
-            if (id == cell.id) {
-                if (cell.isShot === true) {
-                    checkCell(id);
+            if (cell.id === id) {
+                if(cell.isShip && !cell.isShot){
                     cell.isShot = true;
                     document.getElementById(id).textContent = 'X';
-                    const placedShipIndex = placedShips.findIndex(ship => ship.id === cell.shipId);
-                    placedShips[placedShipIndex].hits++;
-                    if (placedShips[placedShipIndex].hits === placedShips[placedShipIndex].size) {
-                        if (playerTurn) {
-                            computerShips--;
-                            console.log("Computer lost a ship. Remaining: ", computerShips);
-                        } else {
-                            playerShips--;
-                            console.log("Player lost a ship. Remaining: ", playerShips);
-                        }
-                    }
-                } else {
+                    searchForComputerShip(row, col);
                     playerTurn = false;
+                } else if (!cell.isShot) {
                     cell.isShot = true;
-                    if (cell.isShip) {
-                        document.getElementById(id).textContent = 'X';
-                    } else {
-                        document.getElementById(id).textContent = 'O';
-
-                    }
+                    document.getElementById(id).textContent = 'O';
+                    playerTurn = false;   
                 }
             }
         }
     }
 }
+
+// If ship is sunken takes 1 ship off
+    function searchForComputerShip(row, col) {
+        let shipFound = false;
+        cell = computerGrid[row][col];
+        computerShipPositions[cell.shipId].size--;
+        if(computerShipPositions[cell.shipId].size < 1) computerShips--;
+    }
+    function searchForPlayerShip(row, col) {
+        let shipFound = false;
+        cell = playerGrid[row][col];
+        playerShipPositions[cell.shipId].size--;
+        if(playerShipPositions[cell.shipId].size < 1) playerShips--;
+    }
 
 function onPlayerTouch(id) {
     if (playerTurn === true) {
@@ -106,8 +107,8 @@ function onPlayerTouch(id) {
 }
 // Initialize Arrays
 function initialize() {
-    playerGrid = initialize2DArray(cols, rows);
-    computerGrid = initialize2DArray(cols, rows);
+    playerGrid = initialize2DArray(cols, rows, 0);
+    computerGrid = initialize2DArray(cols, rows, 100);
     displayBoard();
 }
 
@@ -115,8 +116,8 @@ function initialize() {
 //Start of the Game Loop
 startButton.addEventListener('click', function () {
     initialize();
-    placeShips(playerGrid);
-    placeShips(computerGrid);
+    playerShipPositions = placeShips(playerGrid);
+    computerShipPositions = placeShips(computerGrid);
     loop = setInterval(() => {
         updateGame();
     }, 1000 / fps);
@@ -147,6 +148,7 @@ function computerMove() {
         playerTurn = true;
         if (cell.isShip) {
             document.getElementById(cell.id).textContent = 'X';
+            searchForComputerShip(row, col);
         } else {
             document.getElementById(cell.id).textContent = 'O';
 
@@ -157,8 +159,8 @@ function computerMove() {
 
 
 function placeShips(grid) {
-    const size = grid.length;
-    const placedShips = [];
+    let size = grid.length;
+    let placedShips = [];
 
 
     // Loop through each ship
@@ -199,6 +201,7 @@ function placeShips(grid) {
                     let colShift = direction === 'horizontal' ? j : 0;
                     grid[row + rowShift][col + colShift].isShip = true;
                     grid[row + rowShift][col + colShift].ship = ship;
+                    grid[row + rowShift][col + colShift].shipId = id;
                 }
 
                 shipPlaced = true;
