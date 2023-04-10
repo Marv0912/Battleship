@@ -17,6 +17,7 @@ let computerShipPositions = []; // computer ship positions
 
 /*----- cached elements -----*/
 const startButton = document.getElementById('startButton');
+const playAgainButton = document.querySelector('button');
 /*----- functions -----*/
 
 // Creates 10x10 array
@@ -70,11 +71,11 @@ function checkCell(id) {
     for (let i = 0; i < computerGrid.length; i++) {
         for (let j = 0; j < computerGrid[i].length; j++) {
             let cell = computerGrid[i][j];
-            if (cell.id === id) {
+            if (cell.id == id) {
                 if(cell.isShip && !cell.isShot){
                     cell.isShot = true;
                     document.getElementById(id).textContent = 'X';
-                    searchForComputerShip(row, col);
+                    searchForComputerShip(i, j);
                     playerTurn = false;
                 } else if (!cell.isShot) {
                     cell.isShot = true;
@@ -88,20 +89,22 @@ function checkCell(id) {
 
 // If ship is sunken takes 1 ship off
     function searchForComputerShip(row, col) {
-        let shipFound = false;
         cell = computerGrid[row][col];
-        computerShipPositions[cell.shipId].size--;
-        if(computerShipPositions[cell.shipId].size < 1) computerShips--;
+        if(cell.isShip) {
+            computerShipPositions[cell.shipId].size--;
+            if(computerShipPositions[cell.shipId].size < 1) computerShips--;
+        }
     }
     function searchForPlayerShip(row, col) {
-        let shipFound = false;
         cell = playerGrid[row][col];
-        playerShipPositions[cell.shipId].size--;
-        if(playerShipPositions[cell.shipId].size < 1) playerShips--;
+        if(cell.isShip) {
+            playerShipPositions[cell.shipId].size--;
+            if(playerShipPositions[cell.shipId].size < 1) playerShips--;
+        }
     }
 
 function onPlayerTouch(id) {
-    if (playerTurn === true) {
+    if (playerTurn == true) {
         checkCell(id);
     }
 }
@@ -115,6 +118,7 @@ function initialize() {
 
 //Start of the Game Loop
 startButton.addEventListener('click', function () {
+    startButton.style.display = 'none';
     initialize();
     playerShipPositions = placeShips(playerGrid);
     computerShipPositions = placeShips(computerGrid);
@@ -128,7 +132,14 @@ function updateGame() {
     if (!isGameOver) {
         if (!playerTurn) {
             computerMove();
-        } else if (playerShips === 0 || computerShips === 0) {
+        }
+        if (playerShips === 0) {
+            gameOverMessage.textContent = "Game over! You lost."
+            playAgainButton.hidden = false
+            isGameOver = true;
+        } else if (computerShips === 0) {
+            gameOverMessage.textContent = "Congrats! You won."
+            playAgainButton.hidden = false
             isGameOver = true;
         }
     }
@@ -148,7 +159,7 @@ function computerMove() {
         playerTurn = true;
         if (cell.isShip) {
             document.getElementById(cell.id).textContent = 'X';
-            searchForComputerShip(row, col);
+            searchForPlayerShip(row, col);
         } else {
             document.getElementById(cell.id).textContent = 'O';
 
@@ -161,6 +172,7 @@ function computerMove() {
 function placeShips(grid) {
     let size = grid.length;
     let placedShips = [];
+    let id = Date.now().toString(36) + Math.random().toString(36).substr(2);;
 
 
     // Loop through each ship
