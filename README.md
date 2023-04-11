@@ -13,7 +13,7 @@ Your ships and the enemy's ships will be randomized within their respective grid
 
 Beware! Each of the players have 5 ships, and as soon as one of the players takes down all of them, he will remain victorious!
 
-Try my game out! [Battleship]https://marv0912.github.io/Battleship/
+Try my game out! [Battleship](https://marv0912.github.io/Battleship/)
 
 ## Future updates
 
